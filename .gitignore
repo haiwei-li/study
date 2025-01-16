@@ -6,3 +6,5 @@ gh-md-toc
 .vscode
 
 .autogit/logs
+
+.idea/
