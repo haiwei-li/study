@@ -14,7 +14,7 @@
 
 # 1. 界面语言
 
-按 F1 快捷键或者 Comm + Shift + P, 切入到命令行模式. 输入"Configure Language"(如果是中文版要切换到英文版输入"配置语言"). 
+按 F1 快捷键或者 Comm + Shift + P, 切入到命令行模式. 输入"Configure Language"(如果是中文版要切换到英文版输入"配置语言").
 
 英文: "en"
 
@@ -40,7 +40,7 @@
 
 ### 5.1. 清除多余的行尾空格
 
-按下 `cmd + shift + p`, 在弹出的命令窗口中输入 `trim`, 选中 Trim Trailing Whitespace 并回车执行. 
+按下 `cmd + shift + p`, 在弹出的命令窗口中输入 `trim`, 选中 Trim Trailing Whitespace 并回车执行.
 
 ![2019-09-02-09-30-53.png](./images/2019-09-02-09-30-53.png)
 
@@ -49,3 +49,4 @@
 https://zhuanlan.zhihu.com/p/56699805
 
 https://shd101wyy.github.io/markdown-preview-enhanced/#/zh-cn/
+
