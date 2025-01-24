@@ -10,3 +10,4 @@ You can scan the QR code below to add a friend by using wechat.
 
 ![Haiwei Li](Tools/images/Wechat-lihaiwei.jpeg)
 
+Warmly welcome to exchange technical ideas.
