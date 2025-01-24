@@ -1,12 +1,5 @@
-This blog is writen in markdown with vscode. How to configure? See `Tools/Visual Studio Code/`.
+This blog contains some materials I've organized.
 
-I am interested in Kernel/KVM/Virtualization and much more fields. We can get communication by email or wechat.
+And I am interested in Virtualization/Linux and much more fields. We can get communication by email(haiwei-li@outlook.com) or wechat(MrLiHaiwei).
 
-* Name: Haiwei Li
-* Email: haiwei-li@outlook.com
-* WeChat: LHWonline
-
-You can scan the QR code below to add a friend by using wechat.
-
-![Haiwei Li](Tools/images/Wechat-lihaiwei.jpeg)
-
+Warmly welcome to exchange technical ideas. :)
