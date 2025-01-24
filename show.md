@@ -1,5 +1,6 @@
 Hi, all:
-  This is Haiwei Li. I am interested in Kernel/KVM/Virtualization and much more fields. We can get communication by email or wechat.
+
+This is Haiwei Li. I am interested in Virtualization/Linux and much more fields. We can get communication by email or wechat.
 
 * Name: Haiwei Li
 * Email: haiwei-li@outlook.com
