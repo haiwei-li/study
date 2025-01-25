@@ -1,4 +1,0 @@
-Next at t=0
-(0) [0x00000000fffffff0] f000:fff0 (unk. ctxt): jmp far f000:e05b         ; ea5be000f0
-<bochs:1> c
-(0).[824800000] [0x000000000000913c] 0018:000000000000913c (unk. ctxt): jmp .-2 (0x0000913c)      ; ebfe

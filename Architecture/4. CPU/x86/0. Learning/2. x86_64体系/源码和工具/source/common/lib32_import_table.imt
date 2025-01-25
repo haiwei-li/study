@@ -1,0 +1,77 @@
+; lib32_import_table.imt
+; Copyright (c) 2009-2012 mik 
+; All rights reserved.
+
+
+
+;*****************************************
+;* 定义 lib32 的函数导入表               *
+;* 供所有实验的 protected.asm 模块使用   *
+;* 由 protected.asm 模式 include 进去    *
+;*****************************************
+
+
+%ifndef LIB32_IMPORT_TABLE_IMT
+%define LIB32_IMPORT_TABLE_IMT
+
+
+;*
+;* 说明：
+;       1. LIB32_SEG 是 lib32 库在内存中的基地址
+;       2. LIB32_XXX 是 lib32 库的导出表序号，乘 5 计算出函数地址在导出表的位置
+;*      3. 详情请查阅 lib32.asm 源文件的导出表
+
+
+putc:                           jmp        LIB32_SEG + LIB32_PUTC * 5
+println:                        jmp        LIB32_SEG + LIB32_PRINTLN * 5
+puts:                           jmp        LIB32_SEG + LIB32_PUTS * 5
+get_dword_hex_string:           jmp        LIB32_SEG + LIB32_GET_DWORD_HEX_STRING * 5
+hex_to_char:                    jmp        LIB32_SEG + LIB32_HEX_TO_CHAR * 5
+lowers_to_uppers:               jmp        LIB32_SEG + LIB32_LOWERS_TO_UPPERS * 5
+dump_flags:                     jmp        LIB32_SEG + LIB32_DUMP_FLAGS * 5
+uppers_to_lowers:               jmp        LIB32_SEG + LIB32_UPPERS_TO_LOWERS * 5
+strlen:                         jmp        LIB32_SEG + LIB32_STRLEN * 5
+test_println:                   jmp        LIB32_SEG + LIB32_TEST_PRINTLN * 5
+reverse:                        jmp        LIB32_SEG + LIB32_REVERSE * 5
+get_byte_hex_string:            jmp        LIB32_SEG + LIB32_GET_BYTE_HEX_STRING * 5
+get_qword_hex_string:           jmp        LIB32_SEG + LIB32_GET_QWORD_HEX_STRING * 5
+subtract64:                     jmp        LIB32_SEG + LIB32_SUBTRACT64 * 5
+addition64:                     jmp        LIB32_SEG + LIB32_ADDITION64 * 5
+print_value:                    jmp        LIB32_SEG + LIB32_PRINT_VALUE * 5
+printblank:                     jmp        LIB32_SEG + LIB32_PRINTBLANK * 5
+print_half_byte_value:          jmp        LIB32_SEG + LIB32_PIRNT_HALF_BYTE_VALUE * 5
+set_interrupt_handler:          jmp        LIB32_SEG + LIB32_SET_INTERRUPT_HANDLER * 5
+set_io_bitmap:                  jmp        LIB32_SEG + LIB32_SET_IO_BITMAP * 5
+get_MAXPHYADDR:
+get_maxphyaddr:                 jmp        LIB32_SEG + LIB32_GET_MAXPHYADDR * 5
+print_byte_value:               jmp        LIB32_SEG + LIB32_PRINT_BYTE_VALUE * 5
+print_word_value:               jmp        LIB32_SEG + LIB32_PRINT_WORD_VALUE * 5
+print_dword_value:              jmp        LIB32_SEG + LIB32_PRINT_DWORD_VALUE * 5
+print_qword_value:              jmp        LIB32_SEG + LIB32_PRINT_QWORD_VALUE * 5
+set_call_gate:                  jmp        LIB32_SEG + LIB32_SET_CALL_GATE * 5
+get_tss_base:                   jmp        LIB32_SEG + LIB32_GET_TSS_BASE * 5
+write_gdt_descriptor:           jmp        LIB32_SEG + LIB32_WRITE_GDT_DESCRIPTOR * 5
+read_gdt_descriptor:            jmp        LIB32_SEG + LIB32_READ_GDT_DESCRIPTOR * 5
+get_tr_base:                    jmp        LIB32_SEG + LIB32_GET_TR_BASE * 5
+system_service:                 jmp        LIB32_SEG + LIB32_SYSTEM_SERVICE * 5
+set_user_interrupt_handler:     jmp        LIB32_SEG + LIB32_SET_USER_INTERRUPT_HANDLER * 5
+sys_service_enter:              jmp        LIB32_SEG + LIB32_SYS_SERVICE_ENTER * 5
+set_sysenter:                   jmp        LIB32_SEG + LIB32_SET_SYSENTER * 5
+clib32_service_enter:           jmp        LIB32_SEG + LIB32_CLIB32_SERVICE_ENTER * 5
+set_ldt_descriptor:             jmp        LIB32_SEG + LIB32_SET_LDT_DESCRIPTOR * 5
+move_gdt:                       jmp        LIB32_SEG + LIB32_MOVE_GDT * 5
+set_clib32_service:             jmp        LIB32_SEG + LIB32_SET_CLIB32_SERVICE * 5
+print_dword_decimal:            jmp        LIB32_SEG + LIB32_PRINT_DWORD_DECIMAL * 5
+print_dword_float:              jmp        LIB32_SEG + LIB32_PRINT_DWORD_FLOAT * 5
+print_qword_float:              jmp        LIB32_SEG + LIB32_PRINT_QWORD_FLOAT * 5
+print_tword_float:              jmp        LIB32_SEG + LIB32_PRINT_TWORD_FLOAT * 5
+set_system_service_table:       jmp        LIB32_SEG + LIB32_SET_SYSTEM_SERVICE_TABLE * 5
+set_video_current:              jmp        LIB32_SEG + LIB32_SET_VIDEO_CURRENT * 5
+get_video_current:              jmp        LIB32_SEG + LIB32_GET_VIDEO_CURRENT * 5
+mul64:                          jmp        LIB32_SEG + LIB32_MUL64 * 5
+
+
+
+
+%endif
+

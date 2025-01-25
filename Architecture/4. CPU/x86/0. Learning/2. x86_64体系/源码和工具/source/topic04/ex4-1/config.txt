@@ -1,0 +1,36 @@
+# 输入文件, 输入文件 offset, 输出文件, 输出文件 offset, 写入 block 数( 1 block = 512 bytes)
+# ** 每一项用短号分隔 ****
+#
+# example:
+# 
+#模块名       offset   输出文件名    offset   count(1 count = 512 bytes）
+#-------------------------------------------------
+# boot,		0,	demo.img,	0,	1
+# setup,	0,	demo.img,	1,	2
+# init,		0,	demo.img,	3,	5
+#
+# 意思是：
+# boot  模块从 block 0 开始写入 demo.img 写入位置为 block 0, 写入 1 个 block
+# setup 模块从 block 0 开始写入 demo.img 写入位置为 block 1, 写入 2 个 blocks
+# init  模块从 block 0 开始写入 demo.img 写入位置为 block 3, 写入 5 个 blocks
+
+
+####### 下面是使用到的配置实例：
+
+#### 为 fat32 文件格式的 U盘启动 ####
+..\..\common\uboot,0,c.img,63,1
+setup,0,c.img,1,4
+..\..\lib\lib16,0,c.img,20,2
+
+######## 下面是写入 floppy 盘映像 ######
+..\..\common\boot,0,demo.img,0,1		
+setup,0,demo.img,1,4
+..\..\lib\lib16,0,demo.img,20,2
+
+
+######## 下面是写入 u 盘 #######
+c.img,0,\\.\g:,0,200
+
+###
+# 注意：当使用 merge 写入U盘不成功时，可以使用 Hex 类编辑软件进行合并
+###
