@@ -517,11 +517,11 @@ ubuntu 中启用 page up/down 进行补全功能: https://blog.csdn.net/jingtaoh
 
 -kernel
 
-qemu-system-aarch64 -m 1024 -cpu max,sve=on,sve256=on -M virt,gic-version=3,its=on,iommu=smmuv3,mte=on -nographic -smp 4 -kernel ./arm64Image -append "noinintrd nokaslr loglevel=8 sched_debug root=/dev/vda1 rootfstype=ext4 rw crashkernel=256M device.dyndbg=+pflmt vfio.dyndbg=+pflmt irq_gic_v3_its.dyndbg=+pflmt iommu.dyndbg=+pflmt irqdomain.dyndbg=+pflmt" -drive if=none,file=./jammy-server-cloudimg-arm64.img,id=hd0 -device virtio-blk-device,drive=hd0 -device virtio-net-device,netdev=mynet -netdev user,id=mynet
+qemu-system-aarch64 -m 1024 -cpu max,sve=on,sve256=on -M virt,gic-version=3,its=on,iommu=smmuv3,mte=on -nographic -smp 4 -kernel ./arm64Image -append "noinintrd nokaslr loglevel=8 sched_debug root=/dev/vda1 rootfstype=ext4 rw crashkernel=256M device.dyndbg=+pflmt vfio.dyndbg=+pflmt irq_gic_v3_its.dyndbg=+pflmt iommu.dyndbg=+pflmt irqdomain.dyndbg=+pflmt" -drive if=none,file=./jammy-server-cloudimg-arm64.img,id=hd0 -device virtio-blk-device,drive=hd0 -device virtio-net-device,netdev=mynet -netdev user,id=mynet -chardev socket,id=montest,server=on,wait=off,path=/tmp/mon_test -mon chardev=montest,mode=readline
 
 没有 -kernel
 
-qemu-system-aarch64 -m 1024 -cpu max,sve=on,sve256=on -M virt,gic-version=3,its=on,iommu=smmuv3,mte=on -nographic -smp 4 ./arm64Image -append "noinintrd nokaslr loglevel=8 sched_debug root=/dev/vda1 rootfstype=ext4 rw crashkernel=256M device.dyndbg=+pflmt vfio.dyndbg=+pflmt irq_gic_v3_its.dyndbg=+pflmt iommu.dyndbg=+pflmt irqdomain.dyndbg=+pflmt" -drive if=none,file=./jammy-server-cloudimg-arm64.img,id=hd0 -device virtio-blk-device,drive=hd0 -device virtio-net-device,netdev=mynet -netdev user,id=mynet
+qemu-system-aarch64 -m 1024 -cpu max,sve=on,sve256=on -M virt,gic-version=3,its=on,iommu=smmuv3,mte=on -nographic -smp 4 ./arm64Image -append "noinintrd nokaslr loglevel=8 sched_debug rw crashkernel=256M device.dyndbg=+pflmt vfio.dyndbg=+pflmt irq_gic_v3_its.dyndbg=+pflmt iommu.dyndbg=+pflmt irqdomain.dyndbg=+pflmt" -drive if=none,file=./jammy-server-cloudimg-arm64.img,id=hd0 -device virtio-blk-device,drive=hd0 -device virtio-net-device,netdev=mynet -netdev user,id=mynet -chardev socket,id=montest,server=on,wait=off,path=/tmp/mon_test -mon chardev=montest,mode=readline -serial mon:stdio
 
 
 # 12. 修改 grub
