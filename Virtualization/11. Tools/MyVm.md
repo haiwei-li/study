@@ -9,6 +9,7 @@
   - [2.2. qemu-nbd 方式](#22-qemu-nbd-方式)
 - [3. 开启 root 的 ssh 登录](#3-开启-root-的-ssh-登录)
 - [4. 暂时启动 guest](#4-暂时启动-guest)
+  - [ARM](#arm)
 - [获取 ip](#获取-ip)
 - [5. 修改 default.target](#5-修改-defaulttarget)
 - [6. 基本设置](#6-基本设置)
@@ -25,6 +26,7 @@
 - [9. 修改镜像内容](#9-修改镜像内容)
 - [10. 键盘输入设置](#10-键盘输入设置)
 - [11. 虚拟机最终启动命令](#11-虚拟机最终启动命令)
+  - [ARM](#arm-1)
 - [12. 修改 grub](#12-修改-grub)
 - [13. 防火墙](#13-防火墙)
 - [14. selinux](#14-selinux)
@@ -39,6 +41,8 @@
 链接:
 
 https://cloud-images.ubuntu.com/
+
+https://mirrors.tuna.tsinghua.edu.cn/ubuntu-cloud-images/
 
 或者
 
@@ -58,7 +62,7 @@ $1$WcWo5KOD$o6Fsb.72vc9yH3Uv.0P1h0
 ## 2.1. guestfish 工具
 
 ```
-apt install libguestfs-tools
+apt install libguestfs-tools linux-image-generic
 ```
 
 修改成为固定密码
@@ -174,6 +178,19 @@ sudo /usr/local/bin/qemu-system-x86_64 -name ubuntu -accel kvm -cpu host,-xsave,
 
 > /usr/local/bin/qemu-system-x86_64 -name ubuntu-hirsute --enable-kvm -cpu host -smp 4,sockets=1,cores=2,threads=2 -m 3G -device piix3-usb-uhci,id=usb,bus=pci.0,addr=0x1.0x2 -drive file=./debian-10.12.2-20220419-openstack-amd64.qcow2,if=none,id=drive-virtio-disk1,format=qcow2,cache=none -device virtio-blk-pci,scsi=off,bus=pci.0,addr=0x3,drive=drive-virtio-disk1,id=virtio-disk1,bootindex=1 -netdev user,id=hostnet0 -device rtl8139,netdev=hostnet0,id=net0,mac=52:54:00:36:32:aa,bus=pci.0,addr=0x5 -nographic -full-screen
 
+
+## ARM
+
+如果 host 上支持 virtio, 可以使用下面命令
+
+qemu-system-aarch64 -name ubuntu -M virt,gic-version=3,its=on,iommu=smmuv3,mte=on -nographic -cpu max,sve=on,sve256=on -m 2G -smp 4 -kernel ./arm64Image -append "noinintrd nokaslr loglevel=8 sched_debug root=/dev/vda1 rootfstype=ext4 rw crashkernel=256M device.dyndbg=+pflmt vfio.dyndbg=+pflmt irq_gic_v3_its.dyndbg=+pflmt iommu.dyndbg=+pflmt irqdomain.dyndbg=+pflmt" -drive if=none,file=./ubuntu22.04.qcow2,id=hd0 -device virtio-blk-device,drive=hd0 -netdev user,id=hostnet0 -device virtio-net-device,netdev=mynet -netdev user,id=mynet -nographic -full-screen
+
+
+qemu-system-aarch64 -name ubuntu -M virt,gic-version=3,its=on,iommu=smmuv3,mte=on -nographic -cpu max,sve=on,sve256=on -m 4G -smp 8 \
+    -bios /usr/share/qemu-efi-aarch64/QEMU_EFI.fd \
+    -drive if=virtio,file=./ubuntu22.04.qcow2 \
+    -nographic
+
 # 获取 ip
 
 新建或者修改 /etc/netplan/XXX.yaml
@@ -202,6 +219,13 @@ apt install net-tools isc-dhcp-client
 systemctl set-default multi-user
 
 Created symlink /etc/systemd/system/default.target  ->  /lib/systemd/system/multi-user.target
+
+修改 default grub
+
+```
+// /etc/default/grub
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash console=ttyAMA0 noinintrd nokaslr loglevel=8 sched_debug root=/dev/vda1 rootfstype=ext4 rw crashkernel=256M device.dyndbg=+pflmt vfio.dyndbg=+pflmt irq_gic_v3_its.dyndbg=+pflmt iommu.dyndbg=+pflmt irqdomain.dyndbg=+pflmt"
+```
 
 # 6. 基本设置
 
@@ -486,6 +510,19 @@ ubuntu 中启用 page up/down 进行补全功能: https://blog.csdn.net/jingtaoh
 > ubuntu hirsute image -- daemonize start
 >
 >/usr/bin/qemu-system-x86_64  -name ubuntu-hirsute -machine pc-i440fx-hirsute,accel=kvm,usb=off,dump-guest-core=off -cpu host -m 4G -smp 4,sockets=1,cores=2,threads=2 -uuid 982ab310-b608-49f9-8e0f-afdf7fa3fdda -smbios type=1,serial=982ab310-b608-49f9-8e0f-afdf7fa3fdda,uuid=982ab310-b608-49f9-8e0f-afdf7fa3fdda -no-user-config -nodefaults -chardev socket,id=montest,server=on,wait=off,path=/tmp/mon_test -mon chardev=montest,mode=readline -rtc base=utc,clock=vm -global kvm-pit.lost_tick_policy=discard -no-hpet -no-shutdown -boot strict=on -device piix3-usb-uhci,id=usb,bus=pci.0,addr=0x1.0x2 -drive file=/images/ubuntu_hirsute.qcow2,format=qcow2,if=none,id=drive-virtio-disk0,cache=none,aio=native -object iothread,id=iothread0 -device virtio-blk-pci,iothread=iothread0,scsi=off,bus=pci.0,addr=0x3,drive=drive-virtio-disk0,id=virtio-disk0,bootindex=1 -drive file=/images/data.qcow2,format=qcow2,if=none,id=drive-virtio-disk1,cache=none,aio=native -object iothread,id=iothread1 -device virtio-blk-pci,iothread=iothread1,scsi=off,bus=pci.0,addr=0x4,drive=drive-virtio-disk1,id=virtio-disk1 -netdev user,id=hostnet0 -device rtl8139,netdev=hostnet0,id=net0,mac=52:54:00:36:32:aa,bus=pci.0,addr=0x5 -chardev pty,id=charserial0 -device isa-serial,chardev=charserial0,id=serial0 -vnc 0.0.0.0:1 -k en-us -device cirrus-vga,id=video0,bus=pci.0,addr=0x6 -device virtio-balloon-pci,id=balloon0,bus=pci.0,addr=0x7 -msg timestamp=on -daemonize
+
+## ARM
+
+-chardev socket,id=montest,server=on,wait=off,path=/tmp/mon_test -mon chardev=montest,mode=readline
+
+-kernel
+
+qemu-system-aarch64 -m 1024 -cpu max,sve=on,sve256=on -M virt,gic-version=3,its=on,iommu=smmuv3,mte=on -nographic -smp 4 -kernel ./arm64Image -append "noinintrd nokaslr loglevel=8 sched_debug root=/dev/vda1 rootfstype=ext4 rw crashkernel=256M device.dyndbg=+pflmt vfio.dyndbg=+pflmt irq_gic_v3_its.dyndbg=+pflmt iommu.dyndbg=+pflmt irqdomain.dyndbg=+pflmt" -drive if=none,file=./jammy-server-cloudimg-arm64.img,id=hd0 -device virtio-blk-device,drive=hd0 -device virtio-net-device,netdev=mynet -netdev user,id=mynet
+
+没有 -kernel
+
+qemu-system-aarch64 -m 1024 -cpu max,sve=on,sve256=on -M virt,gic-version=3,its=on,iommu=smmuv3,mte=on -nographic -smp 4 ./arm64Image -append "noinintrd nokaslr loglevel=8 sched_debug root=/dev/vda1 rootfstype=ext4 rw crashkernel=256M device.dyndbg=+pflmt vfio.dyndbg=+pflmt irq_gic_v3_its.dyndbg=+pflmt iommu.dyndbg=+pflmt irqdomain.dyndbg=+pflmt" -drive if=none,file=./jammy-server-cloudimg-arm64.img,id=hd0 -device virtio-blk-device,drive=hd0 -device virtio-net-device,netdev=mynet -netdev user,id=mynet
+
 
 # 12. 修改 grub
 
