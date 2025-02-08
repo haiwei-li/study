@@ -13,10 +13,10 @@
     - [5.2.1. rust 支持 (optional)](#521-rust-支持-optional)
 - [lsp 功能](#lsp-功能)
   - [项目配置](#项目配置)
-    - [法一: compile_commands.json](#法一-compile_commandsjson)
+    - [法一: compile\_commands.json](#法一-compile_commandsjson)
       - [基于 CMake 的项目](#基于-cmake-的项目)
       - [基于其它构建系统的项目](#基于其它构建系统的项目)
-    - [法二: compile_flags.txt](#法二-compile_flagstxt)
+    - [法二: compile\_flags.txt](#法二-compile_flagstxt)
 - [6. Rust(Optional)](#6-rustoptional)
   - [6.1. 语法增强](#61-语法增强)
   - [6.2. 代码片段](#62-代码片段)
@@ -34,6 +34,8 @@ sudo apt-get install exuberant-ctags cscope git wmctrl fonts-powerline ccls buil
 ```
 
 或者 `vim-gtk3`
+
+添加 `export DISPLAY=:0`
 
 # 2. 下载字体
 
