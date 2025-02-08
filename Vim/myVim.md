@@ -33,6 +33,8 @@
 sudo apt-get install exuberant-ctags cscope git wmctrl fonts-powerline ccls build-essential cmake python3-dev vim-athena npm pip curl git zsh pycodestyle bear
 ```
 
+或者 `vim-gtk3`
+
 # 2. 下载字体
 
 `https://github.com/Magnetic2014/YaHei-Consolas-Hybrid-For-Powerline/raw/master/YaHei%20Consolas%20Hybrid%201.12%20For%20Powerline.ttf`
