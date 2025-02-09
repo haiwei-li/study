@@ -38,3 +38,8 @@
     - **特点**: 通过丰富的实践指导和应用案例, 帮助读者将理论知识转化为实际应用能力, 展示了 Cortex-M0 在物联网, 智能家居, 工业控制等多个领域的实际应用, 适合嵌入式系统开发者, 微控制器编程初学者, Cortex-M0 系列处理器的用户以及电子工程专业学生.
 
 
+Armv8/armv9架构入门指南: https://github.com/ArmCommunity/armv8_doc
+
+《ARMv8-A编程指南》: https://blog.csdn.net/Cui_Hongwei/article/details/109484076
+
+Armv8-A虚拟化手册: https://blog.csdn.net/flyingnosky/article/details/122610816
