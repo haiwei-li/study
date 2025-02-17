@@ -1,0 +1,30 @@
+Using the ivshmem shared memory server
+--------------------------------------
+
+This server is only supported on Linux.
+
+To use the shared memory server, first compile it.  Running 'make' should
+accomplish this.  An executable named 'ivshmem_server' will be built.
+
+to display the options run:
+
+./ivshmem_server -h
+
+Options
+-------
+
+    -h  print help message
+
+    -p <path on host>
+        unix socket to listen on.  The qemu-kvm chardev needs to connect on
+        this socket. (default: '/tmp/ivshmem_socket')
+
+    -s <string>
+        POSIX shared object to create that is the shared memory (default: 'ivshmem')
+
+    -m <#>
+        size of the POSIX object in MBs (default: 1)
+
+    -n <#>
+        number of eventfds for each guest.  This number must match the
+        'vectors' argument passed the ivshmem device. (default: 1)

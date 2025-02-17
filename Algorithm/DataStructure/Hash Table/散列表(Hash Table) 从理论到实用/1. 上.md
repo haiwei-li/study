@@ -1,0 +1,1 @@
+http://www.cnblogs.com/1-2-3/archive/2010/10/11/hash-table-part1.html

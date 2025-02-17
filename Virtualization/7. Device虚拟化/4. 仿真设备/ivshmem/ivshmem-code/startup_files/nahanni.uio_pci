@@ -1,0 +1,73 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:		nahanni
+# Required-Start:	$remote_fs $syslog
+# Required-Stop:	$remote_fs $syslog
+# Default-Start:	2 3 4 5
+# Default-Stop:		1
+# Short-Description:	Nahanni Shared Memory
+### END INIT INFO
+
+set -e
+
+# /proc/self/oom_adj?
+if grep -q 'envID:.*[1-9]' /proc/self/status; then
+    unset SSHD_OOM_ADJUST
+fi
+
+. /lib/lsb/init-functions
+
+# Are we running from init?
+run_by_init() {
+    ([ "$previous" ] && [ "$runlevel" ]) || [ "$runlevel" = S ]
+}
+
+remove_dev_uio_ivshmem() {
+    echo -n 0000:00:03.0 > /sys/bus/pci/drivers/uio_ivshmem/unbind
+}
+
+create_dev_uio_ivshmem() {
+    echo "1af4 1110" > /sys/bus/pci/drivers/uio_ivshmem/new_id
+    echo -n 0000:00:03.0 > /sys/bus/pci/drivers/uio_ivshmem/bind
+    return 0
+}
+
+export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
+
+case "$1" in
+  start)
+	log_daemon_msg "Starting Nahanni UIO"
+	if create_dev_uio_ivshmem; then
+	    log_end_msg 0
+	else
+	    log_end_msg 1
+	fi
+	;;
+  stop)
+	log_daemon_msg "Stopping Nahanni UIO"
+	if remove_dev_uio_ivshmem; then
+	    log_end_msg 0
+	else
+	    log_end_msg 1
+	fi
+	;;
+
+  reload|force-reload)
+	;;
+
+  restart)
+	;;
+
+  try-restart)
+	;;
+
+  status)
+	;;
+
+  *)
+	log_action_msg "Usage: /etc/init.d/nahanni {start|stop|reload|force-reload|restart|try-restart|status}"
+	exit 1
+esac
+
+exit 0

@@ -1,0 +1,15 @@
+black
+cyan
+green
+orange
+violet
+blue
+darkgray
+lightgray
+purple
+white
+brown
+gray
+magenta
+red
+yellow

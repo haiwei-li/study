@@ -1,0 +1,67 @@
+From abdaf5b076d7570f588addeb7f1041e6e55b2148 Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <wuzj@lemote.com>
+Date: Fri, 12 Jun 2009 13:01:27 +0800
+Subject: [PATCH] add mips/64bit KFT support
+
+make kft work on kernel when compiled in 64bit, only a few source code
+is modifed, including making the script(sym2addr) be able to handle
+64bit address symbol, and also making the pars_func can handle 64bit
+address via using a macro switch.
+
+Signed-off-by: Wu Zhangjin <wuzj@lemote.com>
+
+diff --git a/kernel/kft.c b/kernel/kft.c
+index 1a5ac86..b8b6ae7 100644
+--- a/kernel/kft.c
++++ b/kernel/kft.c
+@@ -796,7 +796,11 @@ static int __noinstrument parse_func(const char **pos, void **func_addr)
+ {
+ 	int ret;
+ 
++#if BITS_PER_LONG == 64
++	ret = sscanf(*pos, "%lx", (unsigned long *)func_addr);
++#else
+ 	ret = sscanf(*pos, "%x", (int *)func_addr);
++#endif
+ 	skip_token(pos);
+ 	if (ret != 1)
+ 		return -EINVAL;
+@@ -995,12 +999,22 @@ static int __noinstrument print_trigger_config(char *buf, int len,
+ 		dump_str(buf, len, "%s %s at time %lu\n", ts, ss, t->time);
+ 		break;
+ 	case TRIGGER_FUNC_ENTRY:
++#if BITS_PER_LONG == 64
++		dump_str(buf, len, "%s %s entry 0x%016lX\n", ts, ss,
++			(unsigned long)t->func_addr);
++#else
+ 		dump_str(buf, len, "%s %s entry 0x%08lX\n", ts, ss,
+ 			(unsigned long)t->func_addr);
++#endif
+ 		break;
+ 	case TRIGGER_FUNC_EXIT:
++#if BITS_PER_LONG == 64
++		dump_str(buf, len, "%s %s exit 0x%016lX\n", ts, ss,
++			(unsigned long)t->func_addr);
++#else
+ 		dump_str(buf, len, "%s %s exit 0x%08lX\n", ts, ss,
+ 			(unsigned long)t->func_addr);
++#endif
+ 		break;
+ 	case TRIGGER_NONE:
+ 		dump_str(buf, len, "%s %s not set\n", ts, ss);
+diff --git a/scripts/sym2addr b/scripts/sym2addr
+index 7565113..860ddd8 100644
+--- a/scripts/sym2addr
++++ b/scripts/sym2addr
+@@ -15,7 +15,7 @@ for word in `cat $infile` ; do
+ 		new|begin|trigger|start|stop|entry|exit|time|filter|mintime|maxtime|noints|onlyints|0|funclist|fend)
+ 			;;
+ 		*)
+-			addr=`grep " ${word}$" $mapfile | cut -b 1-8`
++			addr=`grep " ${word}$" $mapfile | cut -d ' ' -f1`
+ 			if [ -n "$addr" ]; then
+ 				word="0x$addr"
+ 			fi
+-- 
+1.9.1
+

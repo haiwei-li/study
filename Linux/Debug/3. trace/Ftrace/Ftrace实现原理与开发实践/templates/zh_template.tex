@@ -1,0 +1,203 @@
+\documentclass[$if(fontsize)$$fontsize$,$endif$$if(handout)$handout,$endif$$if(beamer)$ignorenonframetext,$endif$]{$documentclass$}
+$if(theme)$
+\usetheme{$theme$}
+$endif$
+$if(colortheme)$
+\usecolortheme{$colortheme$}
+$endif$
+
+% Hide navigation bar
+\setbeamertemplate{navigation symbols}{}
+\useoutertheme{shadow}
+\setbeamertemplate{headline}{}
+\setbeamertemplate{footline}{}
+
+% Customize tableofcontent
+$if(toc_number_bg)$
+\setbeamercolor{section number projected}{bg=$toc_number_bg$,fg=$toc_number_fg$}
+$endif$
+$if(toc_section_bg)$
+\setbeamercolor{section in toc}{bg=$toc_section_bg$,fg=$toc_section_fg$}
+$endif$
+
+\usepackage{longtable}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifxetex
+  \usepackage{xeCJK}                 % 设置中英文字体
+  \setCJKmainfont{AR PL SungtiL GB}   % 中文字体
+  \setmainfont{AR PL SungtiL GB}     % 英文字体
+  %\setromanfont{DejaVu Sans Mono}
+  %\setmonofont{DejaVu Sans Mono}
+  \linespread{1.2}\selectfont        % 行距
+  \XeTeXlinebreaklocale "zh"         % 中文自动换行
+  \XeTeXlinebreakskip = 0pt plus 1pt % 字之间加0pt至1pt间距
+  \parindent 0em                     % 段缩进
+  \setlength{\parskip}{20pt}         % 段间距
+  \usepackage{fontspec,xltxtra,xunicode}
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+\else
+  \ifluatex
+    \usepackage{fontspec}
+    \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \else
+    \usepackage[utf8]{inputenc}
+  \fi
+\fi
+$if(natbib)$
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+$endif$
+$if(biblatex)$
+\usepackage{biblatex}
+$if(biblio-files)$
+\bibliography{$biblio-files$}
+$endif$
+$endif$
+$if(listings)$
+\usepackage{listings}
+$endif$
+$if(lhs)$
+\lstnewenvironment{code}{\lstset{language=Haskell,basicstyle=\small\ttfamily}}{}
+$endif$
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+$if(verbatim-in-note)$
+\usepackage{fancyvrb}
+$endif$
+$if(fancy-enums)$
+\usepackage{enumerate}
+$endif$
+$if(tables)$
+\usepackage{ctable}
+\usepackage{float} % provides the H option for float placement
+$endif$
+$if(url)$
+\usepackage{url}
+$endif$
+$if(graphics)$
+\usepackage{graphicx}
+$endif$
+% Comment these out if you don't want a slide with just the
+% part/section/subsection/subsubsection title:
+%\AtBeginPart{\frame{\partpage}}
+%\AtBeginSection{\frame{\sectionpage}}
+%\AtBeginSubsection{\frame{\subsectionpage}}
+%\AtBeginSubsubsection{\frame{\subsubsectionpage}}
+\AtBeginSection{
+  \let\insertsectionnumber\relax
+  \let\sectionname\relax
+  \frame{\sectionpage}
+}
+$if(strikeout)$
+\usepackage[normalem]{ulem}
+% avoid problems with \sout in headers with hyperref:
+\pdfstringdefDisableCommands{\renewcommand{\sout}{}}
+$endif$
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+$if(numbersections)$
+$else$
+\setcounter{secnumdepth}{0}
+$endif$
+$if(verbatim-in-note)$
+\VerbatimFootnotes % allows verbatim text in footnotes
+$endif$
+$if(lang)$
+\usepackage[$lang$]{babel}
+$endif$
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+$if(title)$
+\title{$title$}
+$endif$
+$if(author)$
+\author{$for(author)$$author$$sep$ \and $endfor$}
+$endif$
+$if(date)$
+\date{$date$}
+$endif$
+
+% Prepare background picture for titlepage
+\usepackage{wallpaper}
+\setbeamercolor{background canvas}{bg=}
+
+\begin{document}
+$if(title)$
+\begin{frame}[plain]
+$if(titlepage_wallpaper)$
+\ThisCenterWallPaper{1.35}{images/$titlepage_wallpaper$}
+$endif$
+% Insert background picture for titlepage
+%\titlepage
+
+ \begin{center}
+    \vskip3.2cm\par
+    $if(titlepage_titlefg)$
+    \setbeamercolor{mytitle}{fg=$titlepage_titlefg$,bg=}
+    $endif$
+    \begin{beamercolorbox}[sep=8pt]{mytitle}
+      \Huge{\inserttitle}\par
+    \end{beamercolorbox}
+    \vskip2.2cm\par
+    $if(titlepage_authorfg)$
+    \setbeamercolor{myauthor}{fg=$titlepage_authorfg$,bg=}
+    $endif$
+    \begin{beamercolorbox}[sep=8pt]{myauthor}
+      \usebeamerfont{author}\insertauthor
+      \vskip0.2em\par
+      \usebeamerfont{date}\insertdate
+    \end{beamercolorbox}
+  \end{center}
+
+\end{frame}
+$endif$
+
+$for(include-before)$
+$include-before$
+
+$endfor$
+
+$if(toc)$
+\begin{frame}[plain]
+\tableofcontents[hideallsubsections]
+\end{frame}
+
+$endif$
+$body$
+
+% Thanks and question
+\begin{frame}
+\ThisCenterWallPaper{0.73}{images/thanks}
+\end{frame}
+\begin{frame}
+\ThisCenterWallPaper{0.73}{images/question}
+\end{frame}
+
+$if(natbib)$
+$if(biblio-files)$
+$if(biblio-title)$
+$if(book-class)$
+\renewcommand\bibname{$biblio-title$}
+$else$
+\renewcommand\refname{$biblio-title$}
+$endif$
+$endif$
+\bibliography{$biblio-files$}
+
+$endif$
+$endif$
+$if(biblatex)$
+\printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
+
+$endif$
+$for(include-after)$
+$include-after$
+
+$endfor$
+\end{document}

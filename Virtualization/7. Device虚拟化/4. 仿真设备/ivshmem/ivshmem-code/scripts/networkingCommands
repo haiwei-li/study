@@ -1,0 +1,66 @@
+#!/bin/bash
+
+PATH=/usr/sbin:/sbin
+
+## shamelessly lifted from vmware's init script
+vmware_synchrone_kill() {
+   local pid="$1"    # IN
+   local signal="$2" # IN
+   local second
+
+   kill -"$signal" "$pid"
+
+   # Wait a bit to see if the dirty job has really been done
+   for second in 0 1 2 3 4 5 6 7 8 9 10; do
+      if [ ! -d /proc/"$pid" ]; then
+         # Success
+         return 0
+      fi
+
+      sleep 1
+   done
+
+   # Timeout
+   return 1
+}
+
+check_running () {
+
+	local serverd="$1"
+	echo "Using $serverd"
+	serverd_pid=`pidof $serverd`
+	echo $serverd_pid
+	if [ -n "$serverd_pid" ]; then
+		echo "$serverd running"
+		if [ -d /proc/"$serverd_pid" ]; then 
+	        echo "...sleeping on $serverd"
+			sleep 1
+	    fi 
+	else
+		echo "$serverd not running"
+	fi
+	echo "Starting $serverd" 
+}
+
+echo "Setting IP forward"
+sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+echo "Stopping DNSMASQ"
+/etc/init.d/dnsmasq stop
+
+
+
+check_running "vde_switch"
+/usr/local/vde/bin/vde_switch -tap qtap0 -daemon
+
+echo "Configuring qtap0"
+/sbin/ifconfig qtap0 10.111.111.254 broadcast 10.111.111.255 netmask 255.255.255.0 up
+
+echo "Waiting for qtap0 to come up...(sleeping for 5 seconds)"
+sleep 5
+
+iface=eth0
+echo "Setting IPtables with $iface" 
+/sbin/iptables -t nat -A POSTROUTING -o $iface -j MASQUERADE
+
+check_running "dnsmasq"
+/usr/sbin/dnsmasq --log-queries --user=nobody --dhcp-leasefile=/var/tmp/dnsmasq-leasefile --dhcp-range=10.111.111.129,10.111.111.199,255.255.255.0,10.111.111.255,8h --interface=qtap0 --domain=qemu.lan -d

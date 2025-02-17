@@ -1,0 +1,41 @@
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 42a2d0d..ee01eb0 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1362,6 +1362,8 @@ extern u64  kvm_default_tsc_scaling_ratio;
+ 
+ extern u64 kvm_mce_cap_supported;
+ 
++extern bool ipi_fastpath_test;
++
+ /*
+  * EMULTYPE_NO_DECODE - Set when re-emulating an instruction (after completing
+  *			userspace I/O) to indicate that the emulation context
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 91749f1..ad1adf7 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -6288,7 +6288,7 @@ static void vmx_handle_exit_irqoff(struct kvm_vcpu *vcpu,
+ 		handle_external_interrupt_irqoff(vcpu);
+ 	else if (vmx->exit_reason == EXIT_REASON_EXCEPTION_NMI)
+ 		handle_exception_nmi_irqoff(vmx);
+-	else if (!is_guest_mode(vcpu) &&
++	else if (ipi_fastpath_test && !is_guest_mode(vcpu) &&
+ 		vmx->exit_reason == EXIT_REASON_MSR_WRITE)
+ 		*exit_fastpath = handle_fastpath_set_msr_irqoff(vcpu);
+ }
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index b8124b56..e0fd182 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -162,6 +162,10 @@ module_param(force_emulation_prefix, bool, S_IRUGO);
+ int __read_mostly pi_inject_timer = -1;
+ module_param(pi_inject_timer, bint, S_IRUGO | S_IWUSR);
+ 
++bool __read_mostly ipi_fastpath_test = false;
++module_param(ipi_fastpath_test, bool, S_IRUGO | S_IWUSR);
++EXPORT_SYMBOL_GPL(ipi_fastpath_test);
++
+ #define KVM_NR_SHARED_MSRS 16
+ 
+ struct kvm_shared_msrs_global {

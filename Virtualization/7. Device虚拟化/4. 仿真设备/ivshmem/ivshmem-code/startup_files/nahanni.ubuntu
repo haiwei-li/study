@@ -1,0 +1,131 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:		nahanni
+# Required-Start:	$remote_fs $syslog
+# Required-Stop:	$remote_fs $syslog
+# Default-Start:	2 3 4 5
+# Default-Stop:		1
+# Short-Description:	Nahanni Shared Memory
+### END INIT INFO
+
+set -e
+
+export device="/dev/ivshmem"
+export module_name="kvm_ivshmem"
+# /etc/init.d/ssh: start and stop the OpenBSD "secure shell(tm)" daemon
+
+test -x /usr/sbin/sshd || exit 0
+( /usr/sbin/sshd -\? 2>&1 | grep -q OpenSSH ) 2>/dev/null || exit 0
+
+export SSHD_OOM_ADJUST=-17
+if test -f /etc/default/ssh; then
+    . /etc/default/ssh
+fi
+
+# Are we in a virtual environment that doesn't support modifying
+# /proc/self/oom_adj?
+if grep -q 'envID:.*[1-9]' /proc/self/status; then
+    unset SSHD_OOM_ADJUST
+fi
+
+. /lib/lsb/init-functions
+
+if [ -n "$2" ]; then
+    SSHD_OPTS="$SSHD_OPTS $2"
+fi
+
+# Are we running from init?
+run_by_init() {
+    ([ "$previous" ] && [ "$runlevel" ]) || [ "$runlevel" = S ]
+}
+
+check_for_no_start() {
+    # forget it if we're trying to start, and /etc/ssh/sshd_not_to_be_run exists
+    if [ -e /etc/ssh/sshd_not_to_be_run ]; then 
+	if [ "$1" = log_end_msg ]; then
+	    log_end_msg 0
+	fi
+	if ! run_by_init; then
+	    log_action_msg "OpenBSD Secure Shell server not in use (/etc/ssh/sshd_not_to_be_run)"
+	fi
+	exit 0
+    fi
+}
+
+check_dev_null() {
+    if [ ! -c /dev/null ]; then
+	if [ "$1" = log_end_msg ]; then
+	    log_end_msg 1 || true
+	fi
+	if ! run_by_init; then
+	    log_action_msg "/dev/null is not a character device!"
+	fi
+	exit 1
+    fi
+}
+
+check_privsep_dir() {
+    # Create the PrivSep empty dir if necessary
+    if [ ! -d /var/run/sshd ]; then
+	mkdir /var/run/sshd
+	chmod 0755 /var/run/sshd
+    fi
+}
+
+check_config() {
+    if [ ! -e /etc/ssh/sshd_not_to_be_run ]; then
+	/usr/sbin/sshd -t || exit 1
+    fi
+}
+
+create_dev_kvm_ivshmem() {
+  if [ ! -f $device ]; then
+    echo "then"
+    local major=`cat /proc/devices | grep $module_name | awk '{print $1}'`
+    mknod --mode=666 $device c $major 0
+  else
+    echo "else"
+    chmod 666 $device
+  fi
+
+}
+
+export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
+
+case "$1" in
+  start)
+	check_privsep_dir
+	check_for_no_start
+	check_dev_null
+	log_daemon_msg "Starting KVM shared memory device (Nahanni)"
+	if create_dev_kvm_ivshmem; then
+	    log_end_msg 0
+	else
+	    log_end_msg 1
+	fi
+	;;
+  stop)
+	log_daemon_msg "Stopping KVM shared memory device (Nahanni)"
+	if rm -f $device; then
+	    log_end_msg 0
+	else
+	    log_end_msg 1
+	fi
+	;;
+
+  reload|force-reload)
+	;;
+
+  restart)
+	;;
+
+  status)
+	;;
+
+  *)
+	log_action_msg "Usage: /etc/init.d/ssh {start|stop|reload|force-reload|restart|status}"
+	exit 1
+esac
+
+exit 0

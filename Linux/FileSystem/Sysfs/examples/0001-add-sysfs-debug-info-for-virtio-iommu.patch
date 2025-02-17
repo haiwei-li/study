@@ -1,0 +1,181 @@
+From b880e161915553f7b264e1fa6d44b1df721a009d Mon Sep 17 00:00:00 2001
+From: Haiwei Li <haiwei.li@intel.corp-partner.google.com>
+Date: Thu, 30 Dec 2021 23:36:48 +0800
+Subject: [PATCH] add sysfs debug info for virtio-iommu
+
+Change-Id: I7694e95eb8737d6bccaf5b043885c9eee113e2fc
+---
+ drivers/iommu/virtio-iommu.c | 115 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 115 insertions(+)
+
+diff --git a/drivers/iommu/virtio-iommu.c b/drivers/iommu/virtio-iommu.c
+index 33be380c2269..cab29febc748 100644
+--- a/drivers/iommu/virtio-iommu.c
++++ b/drivers/iommu/virtio-iommu.c
+@@ -33,6 +33,9 @@
+ #define VIOMMU_EVENT_VQ			1
+ #define VIOMMU_NR_VQS			2
+ 
++static unsigned long long viommu_nr_maps = 0;
++static unsigned long long viommu_nr_unmaps= 0;
++
+ struct viommu_dev {
+ 	struct iommu_device		iommu;
+ 	struct device			*dev;
+@@ -53,6 +56,7 @@ struct viommu_dev {
+ 	/* Supported MAP flags */
+ 	u32				map_flags;
+ 	u32				probe_size;
++	struct kobject kobj;
+ };
+ 
+ struct viommu_mapping {
+@@ -755,6 +759,7 @@ static int viommu_map(struct iommu_domain *domain, unsigned long iova,
+ 	if (!vdomain->nr_endpoints)
+ 		return 0;
+ 
++	viommu_nr_maps++;
+ 	ret = viommu_send_req_sync(vdomain->viommu, &map, sizeof(map));
+ 	if (ret)
+ 		viommu_del_mappings(vdomain, iova, size);
+@@ -785,6 +790,7 @@ static size_t viommu_unmap(struct iommu_domain *domain, unsigned long iova,
+ 		.virt_end	= cpu_to_le64(iova + unmapped - 1),
+ 	};
+ 
++	viommu_nr_unmaps++;
+ 	ret = viommu_add_req(vdomain->viommu, &unmap, sizeof(unmap));
+ 	return ret ? 0 : unmapped;
+ }
+@@ -958,6 +964,94 @@ static struct iommu_ops viommu_ops = {
+ 	.of_xlate		= viommu_of_xlate,
+ };
+ 
++static ssize_t
++viommu_nr_unmaps_show(char *buf)
++{
++       return sprintf(buf, "%llu\n", viommu_nr_unmaps);
++}
++
++static ssize_t
++viommu_nr_maps_show(char *buf)
++{
++       return sprintf(buf, "%llu\n", viommu_nr_maps);
++}
++
++static ssize_t viommu_nr_unmaps_store(const char *buf, size_t count)
++{
++       unsigned long long size;
++
++       if (kstrtoull(buf, 0, &size) < 0)
++               return -EINVAL;
++       viommu_nr_unmaps = size;
++       return count;
++}
++
++static ssize_t viommu_nr_maps_store(const char *buf, size_t count)
++{
++       unsigned long long size;
++
++       if (kstrtoull(buf, 0, &size) < 0)
++               return -EINVAL;
++       viommu_nr_maps = size;
++       return count;
++}
++struct viommu_sysfs_entry {
++       struct attribute attr;
++       ssize_t (*show)(char *buf);
++       ssize_t (*store)(const char *buf, size_t count);
++};
++
++static struct viommu_sysfs_entry viommu_nr_unmaps_entry = {
++       .attr = { .name = "nr_unmaps", .mode = 0644 },
++       .show = viommu_nr_unmaps_show,
++       .store = viommu_nr_unmaps_store,
++};
++
++static struct viommu_sysfs_entry viommu_nr_maps_entry = {
++       .attr = { .name = "nr_maps", .mode = 0644 },
++       .show = viommu_nr_maps_show,
++       .store = viommu_nr_maps_store,
++};
++
++static struct attribute *viommu_attrs[] = {
++       &viommu_nr_unmaps_entry.attr,
++       &viommu_nr_maps_entry.attr,
++       NULL,
++};
++
++static ssize_t viommu_sysfs_store(struct kobject *kobj, struct attribute *attr,
++                                  const char *buf, size_t count)
++{
++       struct viommu_sysfs_entry *entry =
++               container_of(attr, struct viommu_sysfs_entry, attr);
++
++       return entry->store(buf, count);
++}
++
++static ssize_t viommu_sysfs_show(struct kobject *kobj,
++                                 struct attribute *attr, char *buf)
++{
++       struct viommu_sysfs_entry *entry =
++               container_of(attr, struct viommu_sysfs_entry, attr);
++
++       return entry->show(buf);
++}
++
++static const struct sysfs_ops viommu_sysfs_ops = {
++       .show   = viommu_sysfs_show,
++       .store  = viommu_sysfs_store,
++};
++
++static void viommu_sysfs_release(struct kobject *kobj)
++{
++}
++
++static struct kobj_type viommu_sysfs_ktype = {
++       .sysfs_ops      = &viommu_sysfs_ops,
++       .default_attrs  = viommu_attrs,
++       .release        = viommu_sysfs_release,
++};
++
+ static int viommu_init_vqs(struct viommu_dev *viommu)
+ {
+ 	struct virtio_device *vdev = dev_to_virtio(viommu->dev);
+@@ -994,6 +1088,24 @@ static int viommu_fill_evtq(struct viommu_dev *viommu)
+ 	return 0;
+ }
+ 
++/*
++ * /sys/bus/virtio/drivers/virtio_iommu/virtio0/private_data
++ */
++static int viommu_sysfs_add_private_info(struct viommu_dev *viommu)
++{
++       int ret;
++
++       ret = kobject_init_and_add(&viommu->kobj, &viommu_sysfs_ktype,
++                                  &viommu->dev->kobj, "%s",
++                                  "private_data");
++       if (ret) {
++               kobject_put(&viommu->kobj);
++               return ret;
++       }
++
++       return 0;
++}
++
+ static int viommu_probe(struct virtio_device *vdev)
+ {
+ 	struct device *parent_dev = vdev->dev.parent;
+@@ -1081,6 +1193,9 @@ static int viommu_probe(struct virtio_device *vdev)
+ 
+ 	iommu_device_register(&viommu->iommu);
+ 
++	ret = viommu_sysfs_add_private_info(viommu);
++        if (ret)
++                goto err_free_vqs;
+ #ifdef CONFIG_PCI
+ 	if (pci_bus_type.iommu_ops != &viommu_ops) {
+ 		ret = bus_set_iommu(&pci_bus_type, &viommu_ops);
+-- 
+2.30.2
+
