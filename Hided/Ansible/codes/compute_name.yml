@@ -1,0 +1,9 @@
+---
+- name: Test
+  hosts: deployment
+  gather_facts: F
+  tasks:
+  - name: Get compute node name
+    debug:
+      msg: "{{ item }}"
+    loop: "{{ groups['compute'] }}"

@@ -1,0 +1,2 @@
+- Kolla-ansible(Ocata) 源碼分析: https://www.twblogs.net/a/5c5d97d3bd9eee06ee223c5d
+- OpenStack Kolla 源码分析 --Ansible: https://blog.csdn.net/Tomstrong_369/article/details/51314279

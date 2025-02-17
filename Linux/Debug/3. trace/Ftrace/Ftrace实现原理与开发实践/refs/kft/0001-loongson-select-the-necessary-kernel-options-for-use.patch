@@ -1,0 +1,27 @@
+From afd86ee7f6afacd5143a02af657336adcad8afe1 Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <wuzhangjin@gmail.com>
+Date: Thu, 6 Aug 2009 12:14:40 +0800
+Subject: [PATCH] [loongson] select the necessary kernel options for users
+
+we select the necessary kernel options for users when use enable KFT.
+
+Signed-off-by: Wu Zhangjin <wuzhangjin@gmail.com>
+
+diff --git a/arch/mips/Kconfig.debug b/arch/mips/Kconfig.debug
+index 3bde1ef..80d3d2b 100644
+--- a/arch/mips/Kconfig.debug
++++ b/arch/mips/Kconfig.debug
+@@ -53,6 +53,10 @@ config RUNTIME_DEBUG
+ 
+ config KFT
+ 	bool "Kernel Function Trace"
++	select PROC_FS
++	select DEBUG_KERNEL
++	select KALLSYMS
++	select KALLSYMS_ALL
+ 	help
+ 	  Say Y here to turn on kernel function tracing.
+ 	  This allows you to get a trace of kernel functions
+-- 
+1.9.1
+

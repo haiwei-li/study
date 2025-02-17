@@ -1,0 +1,224 @@
+
+    Basic information
+
+elinux.org-http://elinux.org/Debugging_Portal
+
+Terminology
+
+        -- http://elinux.org/Tracing_Collaboration_Project
+
+Logging/Tracing/Profiling
+
+        -- http://lttng.org/docs/
+
+Information capture methods
+
+        -- http://perfmon2.sourceforge.net/ols2006-perfmon2.pdf
+
+    Information obtained by instrumenting the code (program-level/system-level): count basic-block execution, number of ctxsw/s
+
+
+           Logging: Code-instrument manually.
+
+printf
+Printk  -- Manually capture the information
+           http://www.ibm.com/developerworks/library/l-kernel-logging-apis/index.html
+
+Lastkmsg/pstore
+Ramdump
+logcat
+
+
+Tracepoints 
+	-- Instrumentation points placed at logical locations in code, such as
+	   for system calls, TCP/IP events, file system operations, etc. These
+	   have negligible overhead when not in use, and can be enabled by the
+	   perf command to collect information including timestamps and stack
+	   traces. perf can also dynamically create tracepoints using the
+	   kprobes and uprobes frameworks, for kernel and userspace dynamic
+	   tracing. The possibilities with these are endless.
+
+           http://blog.csdn.net/u011279649/article/details/19072101
+           Documentation/trace/tracepoints.txt
+
+zedtrace --http://lwn.net/Articles/321384/
+
+Trace events
+
+           the TRACE_EVENT() macro is the latest way to add kernel tracepoints.
+           tracpoints derives from trace markers (add tracing callback instead of 'inject' the original code)
+           TRACE_EVENT derives from tracepoints/zedtrace (build retionship between tracepoints and Ftrace).
+
+        -- https://github.com/flar2/shamu/commit/3cb4bf831f604dd51aa2ddd417a1feea4ea11f2f
+
+Mtrace  -- Memory allocate tracer.
+Ltrace  -- Libraries function call tracer.
+Strace  -- System call tracer, list which syscalls called
+
+           Code-hack with Compilers, statically/dynamically.
+
+KFT     -- Kernel function trace with -finstrument-functions
+           http://elinux.org/Using_Kernel_Function_Trace
+
+Ftrace  -- kernel function tracing with -pg, latency tracing, tracepoints, trace events? ...
+           Documentation/trace/
+           https://lwn.net/Articles/608497/
+           https://github.com/brendangregg/perf-tools
+           https://lwn.net/Articles/322666/
+           https://lwn.net/Articles/370423/
+           https://lwn.net/Articles/365835/
+           https://lwn.net/Articles/366796/
+           http://www.ibm.com/developerworks/cn/linux/l-cn-ftrace/index.html
+
+Ringbuffer
+
+       -- http://blog.chinaunix.net/uid-25739055-id-4095797.html
+
+Ftrace stack tracer
+
+        -- Trace max stack: http://lwn.net/Articles/295955/
+
+trace-cmd/KernelShark
+
+	-- Using the Ftrace debugfs interface can be awkward and time
+	   consuming. trace-cmd was created to interface with Ftrace using a
+	   binary tool which comes with full documentation in man pages.
+
+	   Also within that same repository is KernelShark, which is a
+	   graphical user interface to trace-cmd. trace-cmd is built with just
+	   "make" and KernelShark is created with "make gui". This allows
+	   building trace-cmd on your embedded device and keeping the build
+	   from needing the GTK libraries required by KernelShark.
+
+           https://lwn.net/Articles/410200/
+           http://git.kernel.org/?p=linux/kernel/git/rostedt/trace-cmd.git;a=summary
+
+Pytimerchart
+
+        -- You can use pytimechart to explore ftrace traces visually.
+           http://packages.python.org/pytimechart/userguide.html
+
+sched_switch
+        -- sched_switch - Convert sched_switch ftrace data to vcd or matlab
+           https://github.com/lucasdemarchi/sched_switch
+
+GtkWave -- 
+
+Systrace - https://developer.android.com/studio/profile/systrace-commandline.html
+
+	   The Systrace tool helps analyze the performance of your application
+	   by capturing and displaying execution times of your applications
+	   processes and other Android system processes. The tool combines data
+	   from the Android kernel such as the CPU scheduler, disk activity,
+	   and application threads to generate an HTML report that shows an
+	   overall picture of an Android device's system processes for a given
+	   period of time.
+
+	   The Systrace tool is particularly useful in diagnosing display
+	   problems where an application is slow to draw or stutters while
+	   displaying motion or animation.
+
+           https://developer.android.com/studio/profile/systrace.html
+           http://blog.csdn.net/jscese/article/details/48373319
+
+gcov/Kgcov
+
+        -- code line coverage test, analyze and optimization helper, with
+           --coverage, -fprofile-arcs, -ftest-coverage, -fbranch-probabilities.
+           http://ltp.sourceforge.net/coverage/gcov.php
+
+Lcov    -- LCOV is a graphical front-end for GCC's coverage testing tool gcov.
+           http://ltp.sourceforge.net/coverage/lcov.php
+
+Gprof    - user space Profiling for -fprofile-arcs
+
+
+	   Code-Rewrite with breakpoints.
+
+Uprobes -- probe user space programs, http://blog.csdn.net/badu_123/article/details/8302642
+kprobes -- breakpoints based dynamic kernel stats probing: entry, exit, address, track arguments, registers, backtrace.
+           http://www-users.cs.umn.edu/~boutcher/kprobes/
+
+           Code-Rewrite with jumps.
+
+Djprobe -- https://www.kernel.org/doc/ols/2007/ols2007v1-pages-189-200.pdf
+           Direct jump cost instead of breakpoints/one-step exception cost? 
+           http://lkml.iu.edu/hypermail/linux/kernel/0510.3/1873.html
+           http://lkst.sourceforge.net/djprobe.html
+
+LKST    -- Linux Kernel State Tracer(LKST) records information as trace data
+           about events in the Linux Kernel. It records various events like
+           process context switch etc.
+           http://lkst.sourceforge.net/index.html
+           http://elinux.org/Linux_Kernel_State_Tracer
+
+SystemTap
+
+        -- a flexible and extensible system for adding trace collection and analysis to a running Linux kernel.
+
+	   SystemTap is designed to be very flexible (allowing for the
+			   insertion of arbitrary C code), yet also easy-to-use
+	   (most trace statements are written in a simple scripting language,
+	    with useful data collection and aggregation routines available in
+	    (essentially) library form).
+
+	   A key aspect of SystemTap is that it is intended to allow you to
+	   create a trace set (a "tapset"), and run it on a running Linux
+	   system, with no modification or re-compilation of the system
+	   required. To do this, it uses the kernel KProbes interface and
+	   loadable kernel modules to dynamically add probe points and newly
+	   generated code to the running kernel.
+
+           http://elinux.org/System_Tap
+           http://sourceware.org/git/systemtap.git
+           http://www.cnblogs.com/hazir/p/systemtap_introduction.html
+
+    Information from the CPU/chipset (micro-architectural level): count TLB misses, stall cycles, memory access latency
+
+Oprofile - 
+	   OProfile is an open source project that includes a statistical
+	   profiler for Linux systems, capable of profiling all running code at
+	   low overhead.
+
+           http://oprofile.sourceforge.net/doc/internals/index.html
+           http://oprofile.sourceforge.net/doc/eventspec.html
+           drivers/oprofile/cpu_buffer.c: event_handler: oprofile_add_sample(regs...): backtrace: op_mips_backtrace()
+           PMC overflow event sampling, like add many papers together to calculate the highth.
+
+Perf    -- Based on PMC, but the implementation differs from Oprofile.
+       
+           https://perf.wiki.kernel.org/index.php/Main_Page
+           X86: https://perf.wiki.kernel.org/index.php/HardwareReference
+           MIPS/Loongson: http://www.docin.com/p-287147085.html
+	   http://www.brendangregg.com/perf.html
+
+Perfmon2 - http://perfmon2.sourceforge.net/ols2006-perfmon2.pdf
+
+	   The goal of the project is now to develop a user library called
+	   libpfm4 to help setup performance events for use with the
+	   perf_events Linux kernel interface. The development of the perfmon
+	   kernel subsystem, libpfm and pfmon has now stopped.
+
+    Information from all above?
+
+LTTng   -- Linux Trace Toolkit Viewer/Next Generation
+           http://elinux.org/LTTng
+           http://lwn.net/Articles/491510/
+	   http://lwn.net/Articles/492296/
+           http://lttng.org/docs/
+
+	   LTTng provides an integrated interface for both kernel and
+	   user-space tracing. A "tracing" group allows non-root users to
+	   control tracing and read the generated traces. It is multi-user
+	   aware, and allows multiple concurrent tracing sessions.
+
+	   LTTng allows access to tracepoints, function tracing, CPU PMU
+	   counters, kprobes, and kretprobes. It provides the ability to attach
+	   "context" information to events in the trace (e.g. any PMU counter,
+			   process and thread ID, container-aware virtual PIDs
+			   and TIDs, process name, etc). All the extra
+	   information fields to be collected with events are optional,
+	   specified on a per-tracing-session basis (except for timestamp and
+			   event id, which are mandatory). It works on mainline
+	   kernels (2.6.38 or higher) without any patches.
+

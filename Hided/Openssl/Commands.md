@@ -1,0 +1,1 @@
+Openssl的s_client命令: http://www.cnblogs.com/kungfupanda/p/4637740.html

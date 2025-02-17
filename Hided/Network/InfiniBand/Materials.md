@@ -1,0 +1,3 @@
+- 维基: https://zh.wikipedia.org/wiki/InfiniBand
+- https://www.ibm.com/developerworks/cn/aix/library/1105_luoming_infiniband/index.html
+- https://www.cnblogs.com/e-shannon/p/7122659.html

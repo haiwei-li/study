@@ -1,0 +1,10 @@
+.DS_Store
+
+token.txt
+gh-md-toc
+
+.vscode
+
+.autogit/logs
+
+.idea/

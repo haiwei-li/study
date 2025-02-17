@@ -1,0 +1,35 @@
+From 1af8b1200224224c77047170b1ae13e367b17068 Mon Sep 17 00:00:00 2001
+From: Wu Zhangjin <wuzhangjin@gmail.com>
+Date: Thu, 6 Aug 2009 11:49:16 +0800
+Subject: [PATCH] [loongson] update the documentation
+
+currently, KFT support 64bit now, but it only work with gcc 3.4.6
+
+Signed-off-by: Wu Zhangjin <wuzhangjin@gmail.com>
+
+diff --git a/Documentation/kft_kickstart.txt b/Documentation/kft_kickstart.txt
+index 9c5d4bc..d692007 100644
+--- a/Documentation/kft_kickstart.txt
++++ b/Documentation/kft_kickstart.txt
+@@ -49,15 +49,14 @@ make sure these options are there:
+ 
+ CONFIG_KALLSYMS=y
+ CONFIG_KALLSYMS_ALL=y
+-# CONFIG_KALLSYMS_EXTRA_PASS is not set
++CONFIG_KALLSYMS_EXTRA_PASS=y
+ CONFIG_KFT=y
+ CONFIG_KFT_STATIC_RUN=y
+ 
+-!!!NOTE: currently, kft not work on linux kernel/64bit for loongson2f, so
+-please compile the kernel in 32bit for loongson2f.
+-
+ * compile it
+ 
++!!!NOTE: currently, kft only work with gcc 3.4.6 
++
+ when enabling CONFIG_KFT_STATIC_RUN, please do this before compiling:
+ 
+ chmod a+x scripts/mkkftrun.pl
+-- 
+1.9.1
+

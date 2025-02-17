@@ -1,0 +1,1 @@
+http://abcdxyzk.github.io/blog/2017/07/23/kernel-clock-1/

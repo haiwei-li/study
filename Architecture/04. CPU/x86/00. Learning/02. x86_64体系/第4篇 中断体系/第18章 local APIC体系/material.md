@@ -1,0 +1,1 @@
+https://github.com/GiantVM/doc/blob/master/interrupt_and_io/IA32_manual_Ch10.md

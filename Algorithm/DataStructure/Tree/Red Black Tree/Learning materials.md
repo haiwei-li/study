@@ -1,0 +1,2 @@
+- 在线生成红黑树(含变形步骤): http://sandbox.runjs.cn/show/2nngvn8w
+- 《编程之法: 面试和算法心得》中红黑树: https://github.com/julycoding/The-Art-Of-Programming-By-July/blob/master/ebook/zh/03.01.md

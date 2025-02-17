@@ -1,0 +1,42 @@
+
+# Ftrace Principle and Practice
+
+## What is Ftrace
+
+### Linux tracing overview
+
+### Linux logging/profiling/tracing
+
+### Tracing Standards
+
+### Ftrace itself
+
+#### Ftrace framework
+
+#### Ftrace tracers/non-tracers
+
+#### Ftrace tools
+
+## Ftrace Principle
+
+### Function Tracing footstone: mcount
+
+### Performance for product environment
+
+### High resolution `sched_clock`
+
+### Ring Buffer
+
+### User-space Tracing
+
+## Ftrace Practice
+
+### Latency v.s. throughput
+
+### CPUIdle tracing
+
+### Power/Thermal/Network tracing
+
+### Graphic perf tuning
+
+### Filesystem tracing

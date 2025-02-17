@@ -1,0 +1,1 @@
+Linux LVM 硬盘管理及 LVM 扩容: https://www.cnblogs.com/gaojun/archive/2012/08/22/2650229.html

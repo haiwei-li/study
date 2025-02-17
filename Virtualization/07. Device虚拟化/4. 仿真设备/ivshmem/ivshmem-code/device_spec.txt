@@ -1,0 +1,79 @@
+
+Device Specification for Inter-VM shared memory device
+------------------------------------------------------
+
+The Inter-VM PCI device
+-----------------------
+
+BARs
+
+The device supports three BARs.  BAR0 is a 1 Kbyte MMIO region to support
+registers.  BAR1 is used for MSI-X when it is enabled in the device.  BAR2 is
+used to map the shared memory object from the host.  The size of BAR2 is
+specified on the command-line and must be a power of 2 in size.
+
+Registers
+
+The device currently supports 3 registers of 32-bits each plus a register for
+each guest up to a current limit of 253 guests ((1024 - 3*4)/4).  Registers
+are used for synchronization between guests sharing the same memory object when
+interrupts are supported (this requires using the shared memory server).
+
+When using interrupts VMs communicate with a shared memory server that passes
+the shared memory object file descriptor using SCM_RIGHTS.  The server assigns
+each VM an ID number and sends this ID number to the Qemu process along with a
+series of eventfd file descriptors, one per guest using the shared memory
+server.  These eventfds will be used to send interrupts between guests.  Each
+guest listens on the eventfd corresponding to their ID and may use the others
+for sending interrupts to other guests.
+
+enum ivshmem_registers {
+    IntrMask = 0,
+    IntrStatus = 4,
+    IVPosition = 8,
+    Doorbell = 12
+};
+
+The first two registers are the interrupt mask and status registers.  Mask and
+status are only used with pin-based interrupts.  They are unused with MSI
+interrupts.  The IVPosition register is read-only and reports the guest's ID
+number.  To interrupt another guest, a guest must write to another guest's
+Doorbell.  The "Doorbells" begin at offset 12.  A particular guest's doorbell
+offset in the MMIO region is equal to
+
+guest_id * 32 + Doorbell
+
+The doorbell register for each guest is 32-bits.
+
+The semantics of the value written to the doorbell depends on whether the
+device is using MSI or a regular pin-based interrupt.
+
+Regular Interrupts
+------------------
+
+If regular interrupts are used (due to either a guest not supporting MSI or the
+user specifying not to use them on the command-line) then the value written to
+a guest's doorbell is what the receiving guest's status register will be set to.
+
+An status of (2^32 - 1) indicates that a new guest has joined.  Guests
+should not send a message of this value for any other reason.
+
+Message Signalled Interrupts
+----------------------------
+
+The important thing to remember with MSI is that it is only a signal, no
+status is set (since MSI interrupts are not shared).  All information other
+than the interrupt itself should be communicated via the shared memory region.
+
+If the device uses MSI then the value written to the doorbell is the MSI vector
+that will be raised.  Vector 0 is used to notify that a new guest has joined.
+Vector 0 cannot be triggered by another guest since a value of 0 does not
+trigger an eventfd.
+
+ioeventfd/irqfd
+---------------
+
+ioeventfd/irqfd is turned on by irqfd=on passed to the device parameter (it is
+off by default).  When using ioeventfd/irqfd the only interrupt value that can
+be passed to another guest is 1 despite what value is written to a guest's
+Doorbell.

@@ -1,0 +1,101 @@
+#!/bin/bash
+# This is an init script for Fedora 
+
+. /etc/rc.d/init.d/functions
+
+kvm_shmem="kvm_shmem"
+
+vmware_success() {
+  if [ "`type -t 'echo_success' 2>/dev/null`" = 'function' ]; then
+    echo_success
+  else
+    echo -n "$rc_done"
+  fi
+}
+
+vmware_exec() {
+  local msg="$1"  # IN
+  local func="$2" # IN
+  shift 2
+
+  echo -n '   '"$msg"
+
+#  (trap '' HUP; "$func" "$@") >/dev/null 2>&1
+  (trap '' HUP; "$func" "$@") 
+
+  echo 
+  [ $? -eq 0 ]
+  return 0
+}
+
+# Is a given module loaded?
+isLoaded() {
+  local module="$1"
+
+  /sbin/lsmod | awk 'BEGIN {n = "no";} {if ($1 == "'"$module"'") n = "yes";} END {print n;}'
+}
+
+vmware_unload_module() {
+   if [ "`isLoaded "$1"`" = 'yes' ]; then
+      /sbin/rmmod "$1" >/dev/null 2>&1 || exit 1
+   fi
+   return 0
+}
+
+vmware_load_module() {
+   if [ "`isLoaded "$1"`" = 'yes' ]; then
+      /sbin/rmmod "$1"
+   fi
+   /sbin/insmod -s -f "/lib/modules/`uname -r`/kernel/drivers/char/$1.ko" >/dev/null 2>&1 || /sbin/insmod -s -f "$1" >/dev/null 2>&1 || exit 1
+   return 0
+}
+
+vmware_unload_module() {
+   if [ "`isLoaded "$1"`" = 'yes' ]; then
+      /sbin/rmmod "$1" >/dev/null 2>&1 || exit 1
+   fi
+   return 0
+}
+
+vmware_start_kvm_shmem() {
+  # only load kvm_shmem if it's not already loaded
+  if [ "`isLoaded "$kvm_shmem"`" = 'no' ]; then
+    vmware_load_module $kvm_shmem
+  fi
+  if [ ! -f /dev/$kvm_shmem ]; then
+    local major=`cat /proc/devices | grep kvmshmem | awk '{print $1}'`
+    mknod --mode=666 /dev/$kvm_shmem c $major 0
+  else
+    chmod 666 /dev/kvm_shmem
+  fi
+
+  vmware_success
+}
+
+# unmount it
+vmware_stop_kvm_shmem() {
+  # only unload kvm_shmem if it's already loaded
+  if [ "`isLoaded "$kvm_shmem"`" = 'yes' ]; then
+    vmware_unload_module $kvm_shmem
+  fi
+  rm -f /dev/kvm_shmem
+
+  if [ $? -eq 0 ]; then
+    vmware_success
+  fi
+}
+
+case "$1" in
+  start)
+	vmware_exec 'KVM shared memory communication:' vmware_start_kvm_shmem
+	;;
+  stop)
+	vmware_exec 'KVM shared memory communication:' vmware_stop_kvm_shmem
+  	;;
+  *) 
+	log_success_msg "Usage: /etc/init.d/kvm_shmem {start|stop}"
+    	exit 1
+esac
+
+exit $retval 
+

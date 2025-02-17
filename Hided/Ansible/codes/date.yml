@@ -1,0 +1,12 @@
+---
+- name: Print debug infomation eg1
+  hosts: compute
+  gather_facts: F
+  vars:
+    user: jingyong
+  tasks:
+  - name: Command run line
+    shell: date
+    register: result
+  - name: Show debug info
+    debug: var=result verbosity=0

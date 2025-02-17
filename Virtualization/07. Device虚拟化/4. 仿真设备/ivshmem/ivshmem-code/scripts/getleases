@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ -e /etc/vmware/vmnet8/dhcpd/dhcpd.leases ]
+then
+echo "VMware"
+cat /etc/vmware/vmnet8/dhcpd/dhcpd.leases
+echo
+fi
+
+if [ -e /var/tmp/dnsmasq.leasefile ]
+then
+echo "dnsMASQ"
+cat /var/tmp/dnsmasq.leasefile
+fi 

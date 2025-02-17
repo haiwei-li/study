@@ -1,0 +1,1 @@
+Python的动态类型: https://segmentfault.com/a/1190000004620438
