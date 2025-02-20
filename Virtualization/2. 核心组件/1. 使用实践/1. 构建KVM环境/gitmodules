@@ -9,7 +9,7 @@
     url = https://github.com/qemu/ipxe.git
 [submodule "roms/openbios"]
 	path = roms/openbios
-    url = https://github.com/qemu/openbios.git
+    url = https://github.com/openbios/openbios.git
 [submodule "roms/qemu-palcode"]
 	path = roms/qemu-palcode
     url = https://github.com/qemu/qemu-palcode.git
