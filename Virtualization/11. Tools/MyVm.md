@@ -154,6 +154,8 @@ PermitRootLogin yes
 PasswordAuthentication yes
 ```
 
+`systemctl status sshd`
+
 # 4. 暂时启动 guest
 
 如果没有 enable virtio 的话, 可以使用下面命令:
