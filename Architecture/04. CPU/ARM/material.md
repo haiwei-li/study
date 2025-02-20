@@ -44,3 +44,6 @@ Armv8/armv9架构入门指南: https://github.com/ArmCommunity/armv8_doc
 
 Armv8-A虚拟化手册: https://blog.csdn.net/flyingnosky/article/details/122610816
 
+ARMv8-A 中文解读: https://github.com/codingbelief/arm-architecture-reference-manual-for-armv8-a
+
+
