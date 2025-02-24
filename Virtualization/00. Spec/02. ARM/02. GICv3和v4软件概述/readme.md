@@ -1,5 +1,5 @@
 
-<GICv3 and GICv4 Software Overview Release B>
+`<GICv3 and GICv4 Software Overview Release B>`
 
 https://developer.arm.com/documentation/dai0492/latest
 
