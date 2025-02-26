@@ -38,7 +38,7 @@ BusyBox Settings  --->
         [*] Build BusyBox as a static binary (no shared libs)
 ```
 
-Don't use /usr 也一定要选,否则 make install 后 busybox 将安装在原系统的/usr 下,这将覆盖掉系统原有的命令. 选择这个选项后,make install 后会在 busybox 目录下生成一个叫_install 的目录,里面有 busybox 和指向它的链接.
+`Don't use /usr` 也一定要选,否则 make install 后 busybox 将安装在原系统的 `/usr` 下,这将覆盖掉系统原有的命令. 选择这个选项后, make install 后会在 busybox 目录下生成一个叫 `_install` 的目录,里面有 busybox 和指向它的链接.
 
 ```
 BusyBox Settings  --->
@@ -51,14 +51,14 @@ $ make -j 20
 $ make install
 ```
 
-会安装在\_install 目录:
+会安装在 `_install` 目录:
 
 ```
 $ ls _install
 bin  linuxrc  sbin  usr
 ```
 
-把\_install 目录拷贝到 linux-4.0 目录下. 进入\_install 目录, 先创建 etc、dev 等目录.
+把 `_install` 目录拷贝到 linux-4.0 目录下. 进入\_install 目录, 先创建 etc、dev 等目录.
 
 ```
 $ mkdir etc
@@ -67,7 +67,7 @@ $ mkdir mnt
 $ mkdir -p etc/init.d/
 ```
 
-在\_install/etc/init.d/目录下新创建一个叫 rcS 的文件, 并且写入如下内容:
+在 `_install/etc/init.d/` 目录下新创建一个叫 rcS 的文件, 并且写入如下内容:
 
 ```
 #!/bin/sh
@@ -92,7 +92,7 @@ mdev -s
 chmod a+x etc/init.d/rcS
 ```
 
-在\_install/etc 目录新创建一个叫 fstab 的文件, 并写入如下内容.
+在 `_install/etc` 目录新创建一个叫 fstab 的文件, 并写入如下内容.
 
 ```
 proc /proc proc defaults 0 0
@@ -102,7 +102,7 @@ tmpfs /dev tmpfs defaults 0 0
 debugfs /sys/kernel/debug debugfs defaults 0 0
 ```
 
-在\_install/etc 目录新创建一个叫 inittab 的文件, 并写入如下内容.
+在 `_install/etc` 目录新创建一个叫 inittab 的文件, 并写入如下内容.
 
 ```
 ::sysinit:/etc/init.d/rcS
@@ -111,7 +111,7 @@ debugfs /sys/kernel/debug debugfs defaults 0 0
 ::ctrlaltdel:/bin/umount -a -r
 ```
 
-在_install/dev 目录下创建如下设备节点, 需要 root 权限.
+在 `_install/dev` 目录下创建如下设备节点, 需要 root 权限.
 
 ```
 $ cd _install/dev/
