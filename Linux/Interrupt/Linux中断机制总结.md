@@ -23,7 +23,7 @@
 
 # 1. Linux 整体机制
 
-中断在那个 CPU 上执行, 取决于在**那个 CPU 上申请了 vector**并**配置了对应的中断控制器(比如 local APIC**). 如果想要**改变一个中断的执行 CPU**, 必须**重新申请 vector 并配置中断控制器**. 一般通过**echo xxx > /proc/irq/xxx/affinity**来完成调整, 同时 irq\_balance 一类软件可以用于完成中断的均衡.
+中断在那个 CPU 上执行, 取决于在**那个 CPU 上申请了 vector**并**配置了对应的中断控制器(比如 local APIC**). 如果想要**改变一个中断的执行 CPU**, 必须**重新申请 vector 并配置中断控制器**. 一般通过 `echo xxx > /proc/irq/xxx/affinity` 来完成调整, 同时 irq\_balance 一类软件可以用于完成中断的均衡.
 
 当外设触发一次中断后, 一个大概的处理过程是:
 
