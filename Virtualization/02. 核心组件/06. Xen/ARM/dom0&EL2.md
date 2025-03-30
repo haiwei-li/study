@@ -25,7 +25,7 @@ Xen 在 ARM 上的设计目标是减少上下文切换. 通过将 Hypervisor 固
 
 # ARM最新架构的扩展
 
-根据 ARMv8.4 及后续版本, **安全状态（Secure World）** 下的 **EL2** 已被支持, 允许在**安全环境中运行 Hypervisor**. 然而, 这主要用于 TrustZone 等场景，**非安全状态（Normal World）** 下的 Xen Dom0 仍保持在EL1
+根据 ARMv8.4 及后续版本, **安全状态（Secure World）** 下的 **EL2** 已被支持, 允许在**安全环境中运行 Hypervisor**. 然而, 这主要用于 TrustZone 等场景，**非安全状态（Normal World）** 下的 Xen Dom0 仍保持在 EL1
 
 # 技术实现与例外情况
 

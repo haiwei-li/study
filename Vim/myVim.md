@@ -4,6 +4,7 @@
 <!-- code_chunk_output -->
 
 - [1. 安装软件](#1-安装软件)
+- [剪切板](#剪切板)
 - [2. 下载字体](#2-下载字体)
 - [3. 下载 vim 配置](#3-下载-vim-配置)
 - [4. 功能开启](#4-功能开启)
@@ -13,10 +14,10 @@
     - [5.2.1. rust 支持 (optional)](#521-rust-支持-optional)
 - [lsp 功能](#lsp-功能)
   - [项目配置](#项目配置)
-    - [法一: compile\_commands.json](#法一-compile_commandsjson)
+    - [法一: compile_commands.json](#法一-compile_commandsjson)
       - [基于 CMake 的项目](#基于-cmake-的项目)
       - [基于其它构建系统的项目](#基于其它构建系统的项目)
-    - [法二: compile\_flags.txt](#法二-compile_flagstxt)
+    - [法二: compile_flags.txt](#法二-compile_flagstxt)
 - [6. Rust(Optional)](#6-rustoptional)
   - [6.1. 语法增强](#61-语法增强)
   - [6.2. 代码片段](#62-代码片段)
@@ -30,12 +31,58 @@
 # 1. 安装软件
 
 ```
-sudo apt-get install exuberant-ctags cscope git wmctrl fonts-powerline ccls build-essential cmake python3-dev vim-athena npm pip curl git zsh pycodestyle bear
+sudo apt-get install exuberant-ctags cscope git wmctrl fonts-powerline ccls build-essential cmake python3-dev vim-athena npm pip curl git zsh pycodestyle bear xorg lightdm
 ```
 
-或者 `vim-gtk3`
+或者 `vim-gtk3` 并添加 `export DISPLAY=:10.0`
 
-添加 `export DISPLAY=:0`
+# 剪切板
+
+或者 `vim-gtk3` 并添加 `export DISPLAY=:10.0`
+
+开启 SSHD X 转发, 修改 SSHD 配置文件 / etc/ssh/sshd_config, 找到下面按需求取消注释进行启用
+
+```
+# 开启 X 图形转发. yes 开启转发, no 关闭转发.
+X11Forwarding yes
+# 设置显示编号, 从 10 开始. 当第一个用户连接使用 10, 第二个用户则 11, 以此类推.
+X11DisplayOffset 10
+# 设置 SSHD 本地监听方式, yes 使用 unix 套接字, no 使用网络模式.
+X11UseLocalhost yes
+```
+
+```
+export DISPLAY=:10.0
+```
+
+检查系统当前使用的显示管理器:
+
+```
+# cat /etc/X11/default-display-manager
+/usr/sbin/gdm3
+```
+
+sudo systemctl enable --now gdm3
+
+```
+# 确保 SSH 客户端启用 X 转发
+ssh -X user@host
+```
+
+systemctl status display-manager
+
+systemctl status gdm3
+
+apt reinstall xserver-xorg
+
+startx
+
+​验证 X11 功能:
+
+```bash
+xclock
+```
+
 
 # 2. 下载字体
 
@@ -67,7 +114,7 @@ git clone https://github.com/haiwei-li/vinux.git ~/.vim
 
 `let g:fuzzysearcher_plugin_name.cur_val='fzf'`, 启用悬浮窗口
 
-**内嵌终端**:
+内嵌终端:
 
 - 空格 av, 悬浮
 
@@ -167,7 +214,7 @@ python3 install.py --clangd-completer
 
 > YCM 使用了 rust analyzer, 所以不依赖 racer? 不用安装 racer?? `cargo install racer`
 
-YCM 目前已经不用 rls 了, 而是使用 rust-analyzer 作为工具链(因为 Rust 社区决定使用 rust-analyzer)
+YCM 目前已经不用 rls 了, 而是使用 rust-analyzer 作为工具链 (因为 Rust 社区决定使用 rust-analyzer)
 
 所以直接安装使用
 
@@ -226,7 +273,7 @@ apt-cache show libz3-dev |grep -i version
 
 ln -s  /usr/lib/x86_64-linux-gnu/libz3.so.4 /usr/lib/x86_64-linux-gnu/libz3.so.4.8
 
-叫做.clang_xxxx 之类的
+叫做. clang_xxxx 之类的
 
 错误 2:
 
@@ -252,11 +299,11 @@ ln -s  /usr/lib/x86_64-linux-gnu/libz3.so.4 /usr/lib/x86_64-linux-gnu/libz3.so.4
 
 #### 基于 CMake 的项目
 
-这里又分两种情况, 对于基于 CMake 的项目, 只需要启用 `CMAKE_EXPORT_COMPILE_COMMANDS` 即可**自动生成** `compile_commands.json` 文件.
+这里又分两种情况, 对于基于 CMake 的项目, 只需要启用 `CMAKE_EXPORT_COMPILE_COMMANDS` 即可 ** 自动生成 ** `compile_commands.json` 文件.
 
 启用 `CMAKE_EXPORT_COMPILE_COMMANDS` 的方法主要有两种:
 
-一是直接在**命令行参数**中指定, 比如:
+一是直接在 ** 命令行参数 ** 中指定, 比如:
 
 ```
 cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=1 .
@@ -343,7 +390,7 @@ libwidget/include/
 
 ## 6.1. 语法增强
 
-rust.vim: 提供 Rust 文件检测、语法高亮、格式设置与语法检测工具 Syntastic 集成等功能
+rust.vim: 提供 Rust 文件检测, 语法高亮, 格式设置与语法检测工具 Syntastic 集成等功能
 
 ```
 " === rust.vim 配置 ===
@@ -352,14 +399,12 @@ filetype plugin indent on
 " 保存时代码自动格式化
 let g:rustfmt_autosave = 1
 
-" 手动调用格式化,  Visual 模式下局部格式化, Normal 模式下当前文件内容格式化
-" 有时候代码有错误时, rust.vim 不会调用格式化, 手动格式化就很方便
+"手动调用格式化,  Visual 模式下局部格式化, Normal 模式下当前文件内容格式化" 有时候代码有错误时, rust.vim 不会调用格式化, 手动格式化就很方便
 vnoremap <leader>ft :RustFmtRange<CR>
 nnoremap <leader>ft :RustFmt<CR>
 " 设置编译运行 (来自 rust.vim, 加命令行参数则使用命令 `:RustRun!`)
 nnoremap <M-r> :RustRun<CR>
-" 使用 `:verbose nmap <M-t>` 检测 Alt-t 是否被占用
-" 使用 `:verbose nmap` 则显示所有快捷键绑定信息
+"使用 `:verbose nmap <M-t>` 检测 Alt-t 是否被占用" 使用 `:verbose nmap` 则显示所有快捷键绑定信息
 nnoremap <M-t> :RustTest<CR>
 ```
 
@@ -375,7 +420,7 @@ https://rust-analyzer.github.io/manual.html#vimneovim
 
 
 
-Racer: Rust Auto-Complete-er, 代码补全. 而 vim 下的 `racer-rust/vim-racer` 插件已经停止开发, 不建议使用. 应该改用 LSP 插件(vim-lsp, nvim-lspconfig), 补全用 YCM 是否就可以了?
+Racer: Rust Auto-Complete-er, 代码补全. 而 vim 下的 `racer-rust/vim-racer` 插件已经停止开发, 不建议使用. 应该改用 LSP 插件 (vim-lsp, nvim-lspconfig), 补全用 YCM 是否就可以了?
 
 
 
