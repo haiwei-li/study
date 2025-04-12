@@ -35,6 +35,10 @@
 
 # 1. 性能分析概念
 
+<div align='center'>
+<img src="./images/linux-performance-and-analysis-tools.png"/>
+</div>
+
 性能分析由系统资源分配和共享的效率决定, 在 OS 级别资源主要包括以下**四个方面因素**:
 
 (1)CPU

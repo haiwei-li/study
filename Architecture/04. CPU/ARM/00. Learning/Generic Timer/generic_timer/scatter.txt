@@ -1,0 +1,26 @@
+LOAD 0x00000000
+{
+  ;
+  ; Trusted Boot ROM on Base Platform model
+  ;
+  ROM 0x00000000
+  {
+     startup.o (BOOT, +FIRST)
+     * (InRoot$$Sections)
+     * (+RO)
+  }
+
+  ;
+  ; Trusted SRAM (256K) on Base Platform model
+  ;
+
+  ; 32K
+  RAM 0x04000000 0x8000
+  {
+    * (+RW, +ZI)
+  }
+
+  ; 32K
+  ARM_LIB_STACKHEAP 0x04008000 EMPTY 0x0008000
+  {}
+}

@@ -12,7 +12,7 @@
 - 启动信息页(不确定是否存在于 hvm 中)
 - 共享信息页(不确定是否存在于 hvm 中)
 - BIOS(在启动期间的实模式下是必需的), 这包括中断向量表(IVT).
-- 在 qemu 术语中,"内核" 映像位于 /usr/lib/xen/boot/hvmloader.
+- 在 qemu 术语中, "内核" 映像位于 /usr/lib/xen/boot/hvmloader.
 
 # 详细信息
 
