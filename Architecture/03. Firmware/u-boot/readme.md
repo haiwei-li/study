@@ -1,4 +1,6 @@
 
+Uboot启动流程分析——上: https://doc.embedfire.com/lubancat/build_and_deploy/zh/latest/building_image/boot_image_analyse/boot_image_analyse.html
+
 
 common/spl/spl.c
 
