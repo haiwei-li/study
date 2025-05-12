@@ -1,10 +1,9 @@
 
 specification: https://github.com/oasis-tcs/virtio-spec
 
+virtio 简介(四)—— 从零实现一个 virtio 设备 : https://www.cnblogs.com/edver/p/15874178.html
 
-
-
-Linux 虚拟化 KVM-Qemu 分析(九)之 virtio 设备: https://www.cnblogs.com/LoyenWang/p/14399642.html
+Linux 虚拟化 KVM-Qemu 分析 (九) 之 virtio 设备: https://www.cnblogs.com/LoyenWang/p/14399642.html
 
 qemu Virtio 设备创建流程: https://www.blogsebastian.cn/?p=58
 
@@ -56,6 +55,3 @@ drwxr-xr-x  6 root root 0 Jun 22 03:36 1/
 ```
 
 多队列可以提高 IO 性能, 默认多队列个数与 vcpu 个数相同, 让每个 vcpu 可以处理一个队列, 当虚拟机 IO 压力大的时候, IO 数据可以平均到各个队列分别让每个 cpu 单独处理, 从而提高传输效率
-
----
-

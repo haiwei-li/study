@@ -33,6 +33,12 @@ parm:           debugflags:flags for controlling debug output (int)
 nbd                    17554  0
 ```
 
+编译模块
+
+```
+sudo make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8 CONFIG_BLK_DEV_NBD=m -C `pwd` M=`pwd`/drivers/block/ modules
+```
+
 # 2. 将镜像映射为网络设备(NBD)
 
 ```
